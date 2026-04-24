@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>InvoicePro</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<header class="navbar">
+  <h2 class="logo">InvoicePro</h2>
+
+  <div class="nav-search">
+    <input type="text" id="search" placeholder="Search products..." onkeyup="searchProducts()">
+    <button>🔍</button>
+  </div>
+
+  <div class="cart" onclick="goToCart()">🛒</div>
+</header>
+
+<!-- BANNER -->
+<div class="banner">
+  <img id="banner-img" src="https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da">
+</div>
+
+<!-- 🔥 UPDATED CATEGORIES -->
+<div class="categories">
+  <div onclick="displayProducts(products)">All</div>
+  <div onclick="filterCategory('electronics')">Electronics</div>
+  <div onclick="filterCategory('fashion')">Fashion</div>
+  <div onclick="filterCategory('daily')">Daily Use</div>
+  <div onclick="filterCategory('accessories')">Accessories</div>
+</div>
+
+<!-- PRODUCTS -->
+<div id="productList" class="products"></div>
+
+<script src="script.js"></script>
+
+</body>
+</html>

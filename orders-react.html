@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>React Orders</title>
+
+  <!-- React CDN -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+
+</head>
+
+<body>
+
+<h2 style="text-align:center;">⚛️ React Orders</h2>
+
+<div id="root"></div>
+
+<script>
+const e = React.createElement;
+
+function Orders(){
+
+  let orders = JSON.parse(localStorage.getItem("orders")) || [];
+
+  if(orders.length === 0){
+    return e("p", null, "No orders yet");
+  }
+
+  return e("div", null,
+    orders.map(order =>
+      e("div", {
+        style:{
+          border:"1px solid #ddd",
+          padding:"10px",
+          margin:"10px",
+          borderRadius:"8px"
+        }
+      },
+        e("p", null, "Invoice: " + order.invoiceNo),
+        e("p", null, "Total: ₹" + order.total)
+      )
+    )
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(e(Orders));
+</script>
+
+</body>
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Payment</title>
+
+  <!-- EmailJS -->
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
+  <script>
+    (function(){
+      emailjs.init("gKk_Y5EmQ7cvlQb_g"); // your PUBLIC KEY
+    })();
+  </script>
+
+  <style>
+    body {
+      font-family: Arial;
+      text-align: center;
+      background: #f5f7fa;
+    }
+
+    .box {
+      background: white;
+      padding: 20px;
+      width: 300px;
+      margin: 50px auto;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    input {
+      width: 90%;
+      padding: 8px;
+      margin: 8px;
+    }
+
+    button {
+      padding: 10px 20px;
+      background: #0d6efd;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="box">
+  <h2>Payment</h2>
+
+  <input id="custName" placeholder="Name"><br>
+  <input id="custPhone" placeholder="Phone"><br>
+  <input id="custAddress" placeholder="Address"><br>
+
+  <hr>
+
+  <input placeholder="Card Number"><br>
+  <input placeholder="Name on Card"><br>
+  <input placeholder="Expiry"><br>
+  <input placeholder="CVV"><br>
+
+  <button onclick="payNow()">Pay Now</button>
+
+  <div id="loader" style="display:none;">
+    <p>Processing... ⏳</p>
+  </div>
+</div>
+
+<script>
+
+function payNow(){
+
+  console.log("PAY BUTTON CLICKED");
+
+  document.getElementById("loader").style.display = "block";
+
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+  if(cart.length === 0){
+    alert("Cart is empty!");
+    return;
+  }
+
+  let customer = {
+    name: document.getElementById("custName").value,
+    phone: document.getElementById("custPhone").value,
+    address: document.getElementById("custAddress").value
+  };
+
+  let total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+
+  // 🔥 BACKEND CALL
+  fetch("http://localhost:3000/calculate", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      total: total,
+      customer: customer
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+
+    console.log("BACKEND RESPONSE:", data);
+
+    let invoice = {
+      invoiceNo: data.invoiceNo,
+      date: new Date().toLocaleString(),
+      items: cart,
+      total: data.total,
+      discount: data.discount,
+      finalTotal: data.finalTotal,
+      customer: customer
+    };
+
+    localStorage.setItem("lastInvoice", JSON.stringify(invoice));
+
+    console.log("Sending Email...");
+
+    // 📧 EMAILJS SEND
+    emailjs.send("service_pc82osg", "template_4otzip6", {
+      name: customer.name,
+      email: "itsaasthathk@gmail.com",
+      message: "Your order has been successfully placed!",
+      invoice: `
+Invoice No: ${invoice.invoiceNo}
+Total: ₹${invoice.total}
+Discount: ₹${invoice.discount}
+Final Total: ₹${invoice.finalTotal}
+`
+    })
+    .then(function(response) {
+      console.log("EMAIL SENT ✅", response);
+    })
+    .catch(function(error) {
+      console.log("EMAIL FAILED ❌", error);
+    });
+
+    localStorage.removeItem("cart");
+
+    setTimeout(()=>{
+      window.location.href = "success.html";
+    }, 1500);
+  })
+  .catch(err => {
+    console.log("BACKEND ERROR ❌", err);
+    alert("Backend error ❌");
+  });
+}
+
+</script>
+
+</body>
+</html>

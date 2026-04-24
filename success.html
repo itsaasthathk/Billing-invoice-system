@@ -1,0 +1,285 @@
+<button onclick="testEmail()">TEST EMAIL</button>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Order Success</title>
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    body{
+      background:#f5f7fa;
+      font-family:Arial;
+      text-align:center;
+    }
+
+    .success{
+      padding:30px;
+    }
+
+    button{
+      padding:10px 20px;
+      margin:10px;
+      border:none;
+      border-radius:5px;
+      cursor:pointer;
+    }
+
+    .no-print{
+      margin-top:10px;
+    }
+
+    @media print {
+      body * { visibility: hidden; }
+
+      .invoice, .invoice * {
+        visibility: visible;
+      }
+
+      .invoice {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+      }
+    }
+  </style>
+
+</head>
+
+<body>
+
+<div class="success">
+
+  <h1 class="no-print">✅ Order Placed!</h1>
+  <p class="no-print">Your order is successful 🎉</p>
+  <!-- EmailJS Script -->
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
+<script>
+  // INIT EMAILJS
+  (function(){
+    emailjs.init("gKk_Y5EmQ7cvlQb_g");
+  })();
+
+  // TEST EMAIL FUNCTION
+  function testEmail(){
+    console.log("TEST CLICKED");
+
+    emailjs.send("service_pc82osg", "template_4otzip6", {
+      name: "Aastha",
+      email: "itsaasthathk@gmail.com",
+      message: "This is a test email from project",
+      invoice: "Invoice Test 123"
+    })
+    .then(function(res){
+      console.log("EMAIL SENT ✅", res);
+      alert("Email Sent Successfully ✅");
+    })
+    .catch(function(err){
+      console.log("EMAIL FAILED ❌", err);
+      alert("Email Failed ❌");
+    });
+  }
+</script>
+
+<!-- TEST BUTTON -->
+<button onclick="testEmail()">TEST EMAIL</button>
+
+  <!-- EMAIL -->
+  <p class="no-print">📧 Invoice sent to: itsaasthathk@gmail.com</p>
+
+  <!-- TIME -->
+  <p id="apiTime" class="no-print" style="font-size:18px;"></p>
+
+  <!-- WEATHER -->
+  <p id="weatherBox" class="no-print" style="font-size:18px; color:#333;"></p>
+
+  <!-- ORDER TRACKING -->
+  <div class="no-print" style="margin:20px auto; max-width:500px;">
+    <h3>Order Tracking</h3>
+    <div style="display:flex; justify-content:space-between;">
+      <span id="step1">🟢 Order Placed</span>
+      <span id="step2">⚪ Packed</span>
+      <span id="step3">⚪ Shipped</span>
+      <span id="step4">⚪ Delivered</span>
+    </div>
+  </div>
+
+  <!-- INVOICE -->
+  <div id="invoiceBox" class="invoice"></div>
+
+  <button class="no-print" onclick="window.print()">Print Invoice</button>
+  <br>
+  <button class="no-print" onclick="goHome()">Go Home</button>
+
+</div>
+
+<script>
+
+//////////////////////////
+// LOAD INVOICE
+let invoice = JSON.parse(localStorage.getItem("lastInvoice"));
+
+if(!invoice){
+  document.getElementById("invoiceBox").innerHTML =
+    "<h2 style='color:red;'>❌ Invoice not found</h2>";
+} else {
+
+let html = `
+<div style="
+  max-width:800px;
+  margin:auto;
+  background:white;
+  border-radius:10px;
+  box-shadow:0 4px 15px rgba(0,0,0,0.1);
+">
+
+  <div style="background:#0d6efd;color:white;padding:20px;">
+    <h2>InvoicePro</h2>
+  </div>
+
+  <div style="padding:20px;">
+
+    <h3>Customer Details</h3>
+    <p><b>Name:</b> ${invoice.customer?.name || "-"}</p>
+    <p><b>Phone:</b> ${invoice.customer?.phone || "-"}</p>
+    <p><b>Address:</b> ${invoice.customer?.address || "-"}</p>
+
+    <hr>
+
+    <div style="display:flex; justify-content:space-between;">
+      <p><b>Invoice No:</b> ${invoice.invoiceNo}</p>
+      <p><b>Date:</b> ${invoice.date}</p>
+    </div>
+
+    <hr>
+
+    <table style="width:100%;border-collapse:collapse;">
+      <tr style="background:#eee;">
+        <th style="padding:10px;border:1px solid #ddd;">Item</th>
+        <th style="padding:10px;border:1px solid #ddd;">Qty</th>
+        <th style="padding:10px;border:1px solid #ddd;">Price</th>
+        <th style="padding:10px;border:1px solid #ddd;">Total</th>
+      </tr>
+`;
+
+invoice.items.forEach(item=>{
+  html += `
+    <tr>
+      <td style="padding:10px;border:1px solid #ddd;">${item.name}</td>
+      <td style="padding:10px;border:1px solid #ddd;">${item.qty}</td>
+      <td style="padding:10px;border:1px solid #ddd;">₹${item.price}</td>
+      <td style="padding:10px;border:1px solid #ddd;">₹${item.price * item.qty}</td>
+    </tr>
+  `;
+});
+
+html += `
+    </table>
+
+    <hr>
+
+    <h2 style="text-align:right;color:#0d6efd;">
+      Grand Total: ₹${invoice.total}
+    </h2>
+
+    <p style="text-align:center;color:gray;">
+      ✨ Thank you for your purchase 💖
+    </p>
+
+  </div>
+</div>
+`;
+
+document.getElementById("invoiceBox").innerHTML = html;
+}
+
+function goHome(){
+  window.location.href = "index.html";
+}
+
+//////////////////////////
+// TIME API
+fetch("https://worldtimeapi.org/api/timezone/Asia/Kolkata")
+  .then(res => res.json())
+  .then(data => {
+    document.getElementById("apiTime").innerText =
+      "⏰ " + data.datetime;
+  });
+
+//////////////////////////
+// WEATHER API (FIXED CITY — WORKS 100%)
+fetch("https://api.openweathermap.org/data/2.5/weather?q=Chandigarh&appid=2c73301a8301d0f252fb02ebf6b7f0f5&units=metric")
+  .then(res => res.json())
+  .then(data => {
+    console.log("Weather:", data);
+
+    document.getElementById("weatherBox").innerHTML =
+      "🌦️ Weather: <b>" + data.name + "</b> | " + data.main.temp + "°C";
+  })
+  .catch(()=>{
+    document.getElementById("weatherBox").innerText =
+      "❌ Weather not loading";
+  });
+
+//////////////////////////
+// ORDER TRACKING
+let steps = ["step1","step2","step3","step4"];
+let current = 0;
+
+function updateTracking(){
+  if(current < steps.length){
+    document.getElementById(steps[current]).innerText =
+      "🟢 " + document.getElementById(steps[current]).innerText.replace("⚪","");
+
+    current++;
+    setTimeout(updateTracking, 1500);
+  }
+}
+updateTracking();
+
+</script>
+
+</body>
+</html>
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
+<script>
+(function(){
+  emailjs.init("gKk_Y5EmQ7cvlQb_g");
+})();
+
+window.onload = function(){
+
+  console.log("Success page loaded");
+
+  let invoice = JSON.parse(localStorage.getItem("lastInvoice"));
+
+  if(!invoice){
+    console.log("No invoice found ❌");
+    return;
+  }
+
+  console.log("Sending Email...");
+
+  emailjs.send("service_pc82osg", "template_4otzip6", {
+    name: invoice.customer.name,
+    email: "itsaasthathk@gmail.com",
+    message: "Your order has been successfully placed!",
+    invoice: `
+Invoice No: ${invoice.invoiceNo}
+Total: ₹${invoice.total}
+Discount: ₹${invoice.discount}
+Final Total: ₹${invoice.finalTotal}
+`
+  })
+  .then(function(res){
+    console.log("EMAIL SENT ✅", res);
+  })
+  .catch(function(err){
+    console.log("EMAIL FAILED ❌", err);
+  });
+
+}
+</script>

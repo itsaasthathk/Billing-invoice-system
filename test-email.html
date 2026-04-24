@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Email Test</title>
+
+  <!-- EmailJS -->
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
+  <script>
+    (function(){
+      emailjs.init("gKk_Y5EmQ7cvlQb_g");
+    })();
+
+    function testEmail(){
+      console.log("BUTTON CLICKED");
+
+      emailjs.send("service_pc82osg", "template_4otzip6", {
+        name: "Aastha",
+        email: "itsaasthathk@gmail.com",
+        message: "Test Email Working",
+        invoice: "Invoice Test"
+      })
+      .then(function(res){
+        console.log("EMAIL SENT ✅", res);
+        alert("Email Sent ✅");
+      })
+      .catch(function(err){
+        console.log("EMAIL FAILED ❌", err);
+        alert("Email Failed ❌");
+      });
+    }
+  </script>
+</head>
+
+<body>
+
+<h2>Email Test Page</h2>
+
+<button onclick="testEmail()">Send Test Email</button>
+
+</body>
+</html>

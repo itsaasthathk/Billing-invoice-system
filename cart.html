@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Cart</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<h2 class="cart-title">🛒 Your Cart</h2>
+
+<div class="cart-container">
+
+  <!-- LEFT SIDE ITEMS -->
+  <div id="cartItems" class="cart-left"></div>
+
+  <!-- RIGHT SIDE SUMMARY -->
+  <div class="summary">
+
+    <h3>Order Summary</h3>
+
+    <div class="summary-row">
+      <span>Subtotal</span>
+      <span id="subtotal"></span>
+    </div>
+
+    <div class="summary-row">
+      <span>GST</span>
+      <span id="gst"></span>
+    </div>
+
+    <div class="summary-row">
+      <span>Discount</span>
+      <span id="discount"></span>
+    </div>
+
+    <div class="summary-row">
+      <span>Delivery</span>
+      <span id="delivery"></span>
+    </div>
+
+    <hr>
+
+    <div class="summary-total">
+      <span>Total</span>
+      <span id="total"></span>
+    </div>
+
+    <!-- COUPON -->
+    <div class="coupon-box">
+      <input type="text" id="coupon" placeholder="Enter coupon">
+      <button onclick="applyCoupon()">Apply</button>
+    </div>
+
+    <button class="pay-btn" onclick="checkout()">Proceed to Payment</button>
+
+  </div>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
