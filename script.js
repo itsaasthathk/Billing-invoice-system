@@ -1,5 +1,5 @@
 let products = [
-  {name:"iPhone 14", price:70000, img:"assets/iphone.jpg", gst:0.18, category:"electronics"},
+  {name:"iPhone 14", price:70000, img:"iphone.jpg", gst:0.18, category:"electronics"},
   {name:"Shoes", price:2000, img:"assets/shoes.jpg", gst:0.12, category:"fashion"},
   {name:"Toothpaste", price:150, img:"assets/toothpaste.jpg", gst:0.05, category:"daily"},
   {name:"Keychain", price:100, img:"assets/keychain.jpg", gst:0.12, category:"accessories"},
